@@ -1,6 +1,0 @@
-#File for Allman Styled Brackets
-Language: Cpp
-BasedOnStyle: LLVM
-BreakBeforeBraces: Allman
-IndentWidth: 4
-ColumnLimit: 500
