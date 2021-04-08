@@ -4,18 +4,18 @@
 
   ROUND ROBIN SCHEDULER IMPLEMENTATION
 */
-#include <iostream>
 #include <stdlib.h>
+
+#include <iostream>
 #include <vector>
 
 // Process Struct:
-struct processS
-{
+struct processS {
   int id;
-  int arrivalT;    // sys time where it arrives
-  float requiredT; // time required to finish
-  float exeT;      // time spent executing(increments until == required T)
-  int finishT;     // sys time when it finishes
+  int arrivalT;     // sys time where it arrives
+  float requiredT;  // time required to finish
+  float exeT;       // time spent executing(increments until == required T)
+  int finishT;      // sys time when it finishes
   int waitT;
   int completed;
 };
@@ -23,10 +23,9 @@ struct processS
 // Queues:
 std::vector<processS> readyQueue;
 std::vector<processS> cpu;
-const int q = 1; // q quantum
+const int q = 1;  // q quantum
 
-int main(void)
-{
+int main(void) {
   /*
   Test Cases:
   int pNum = 5;
@@ -60,14 +59,13 @@ int main(void)
 
   // Create array of processes from user input:
   // TODO //UN COMMENT
-  int pNum; // process #
+  int pNum;  // process #
   std::cout << "Enter Number of Processes" << std::endl;
   std::cin >> pNum;
   processS process[pNum];
 
   // Ask for information in relation to each process:
-  for (int i = 0; i < pNum; i++)
-  {
+  for (int i = 0; i < pNum; i++) {
     std::cout << "Enter Arrival and Required Time" << std::endl;
     std::cin >> process[i].arrivalT >> process[i].requiredT;
     process[i].id = i;
@@ -103,16 +101,13 @@ int main(void)
   int d = 0;
 
   while (arr != pNum &&
-         complete != pNum) // while there are processes in execution
+         complete != pNum)  // while there are processes in execution
   {
-
-    if (arr != pNum) // if processes are still arriving (1)
+    if (arr != pNum)  // if processes are still arriving (1)
     {
       int r = 0;
 
-      for (r = 0; r <= pNum; r++)
-      {
-
+      for (r = 0; r <= pNum; r++) {
         // DEBUG FOR INFINITE LOOP:
         // if(t == 10)
         // {
@@ -121,7 +116,7 @@ int main(void)
         // }
 
         if (process[r].arrivalT ==
-            t) // checks if current time a process arrives
+            t)  // checks if current time a process arrives
         {
           // DEBUG FOR DISPLAYING PROCESSES
           // for(int i = 0; i < pNum; i++)
@@ -132,7 +127,7 @@ int main(void)
           // }
           //
 
-          if (readyQueue.empty() && cpu.empty()) // WORKS!! //1
+          if (readyQueue.empty() && cpu.empty())  // WORKS!! //1
           {
             // std::cout << "//IF1(empty q and empty cpu)" << std::endl;//Debug
 
@@ -146,13 +141,11 @@ int main(void)
             // Update exeT (execution time)
             cpu.push_back(process[r]);
             process[cpu[0].id].exeT++;
-            prev = cpu[r].id; // temp value
+            prev = cpu[r].id;  // temp value
 
             // extra process
-            for (int b = r + 1; b <= pNum; b++)
-            {
-              if (process[b].arrivalT == t)
-              {
+            for (int b = r + 1; b <= pNum; b++) {
+              if (process[b].arrivalT == t) {
                 std::cout << "Process" << process[b].id << "ALSO ARRIVES"
                           << std::endl;
                 std::cout << "^ENTERS READY QUEUE" << std::endl;
@@ -160,10 +153,8 @@ int main(void)
               }
             }
             r = pNum;
-          }
-          else if (readyQueue.empty() && !cpu.empty()) // 2
+          } else if (readyQueue.empty() && !cpu.empty())  // 2
           {
-
             // std::cout << "//IF2(empty q and !empty cpu)" << std::endl;//debug
 
             std::cout << "**AT TIME** " << t << std::endl;
@@ -173,10 +164,8 @@ int main(void)
             std::cout << std::endl;
             readyQueue.push_back(process[r]);
             // extra process
-            for (int b = r + 1; b <= pNum; b++)
-            {
-              if (process[b].arrivalT == t)
-              {
+            for (int b = r + 1; b <= pNum; b++) {
+              if (process[b].arrivalT == t) {
                 std::cout << "Process" << process[r].id << "ALSO ARRIVES"
                           << std::endl;
                 std::cout << "^ENTERS READY QUEUE" << std::endl;
@@ -187,26 +176,26 @@ int main(void)
             // Check if Process in cpu is done executing if yes update token if
             // no put on ready Q
             if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-                process[cpu[0].id].completed == 0) // a
+                process[cpu[0].id].completed == 0)  // a
             {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu COMPLETE" << std::endl;
               std::cout << std::endl;
               process[cpu[0].id].completed = 1;
               process[cpu[0].id].finishT = t;
-              complete++; // update # of completed processes
+              complete++;  // update # of completed processes
 
-              cpu.clear(); // free cpu
-            }
-            else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                     process[cpu[0].id].completed == 0) // b
-            {                                           // if
+              cpu.clear();  // free cpu
+            } else if (process[cpu[0].id].exeT !=
+                           process[cpu[0].id].requiredT &&
+                       process[cpu[0].id].completed == 0)  // b
+            {                                              // if
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu ENTERS READY QUEUE" << std::endl;
               std::cout << std::endl;
               readyQueue.push_back(process[cpu[0].id]);
 
-              cpu.clear(); // free cpu
+              cpu.clear();  // free cpu
             }
 
             // NEXT:
@@ -218,8 +207,7 @@ int main(void)
             readyQueue.erase(readyQueue.begin());
             prev = cpu[r].id;
             r = pNum;
-          }
-          else if (!readyQueue.empty() && !cpu.empty()) // 3
+          } else if (!readyQueue.empty() && !cpu.empty())  // 3
           {
             // std::cout << "//IF3 (!empty q and !empty cpu)" <<
             // std::endl;//debug std::cout << "///VECTOR DEBUG: FRONT OF QUEUE
@@ -233,12 +221,8 @@ int main(void)
             std::cout << std::endl;
             readyQueue.push_back(process[r]);
 
-            for (int b = r + 1; b <= pNum; b++)
-            {
-
-              if (process[b].arrivalT == t)
-              {
-
+            for (int b = r + 1; b <= pNum; b++) {
+              if (process[b].arrivalT == t) {
                 std::cout << "Process" << process[b].id << "ALSO ARRIVES"
                           << std::endl;
                 std::cout << "^ENTERS READY QUEUE" << std::endl;
@@ -247,27 +231,27 @@ int main(void)
             }
 
             if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-                process[cpu[0].id].completed == 0) // a
+                process[cpu[0].id].completed == 0)  // a
             {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu COMPLETE" << std::endl;
               std::cout << std::endl;
               process[cpu[0].id].completed = 1;
               process[cpu[0].id].finishT = t;
-              complete++; // update # of completed processes
+              complete++;  // update # of completed processes
 
-              cpu.clear(); // free cpu
-            }
-            else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                     process[cpu[0].id].completed == 0) // b
-            {                                           // if
+              cpu.clear();  // free cpu
+            } else if (process[cpu[0].id].exeT !=
+                           process[cpu[0].id].requiredT &&
+                       process[cpu[0].id].completed == 0)  // b
+            {                                              // if
 
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu ENTERS READY QUEUE" << std::endl;
               std::cout << std::endl;
               readyQueue.push_back(process[cpu[0].id]);
 
-              cpu.clear(); // free cpu
+              cpu.clear();  // free cpu
             }
 
             // NEXT:
@@ -282,73 +266,64 @@ int main(void)
             prev = cpu[r].id;
             r = pNum;
           }
-          arr++; // updates # or arrivals
+          arr++;  // updates # or arrivals
 
           std::cout << std::endl;
           // std::cout << "t1-" << t << std::endl;
           std::cout << "------------------------END TIME "
                        "SLICE------------------------"
-                    << std::endl; // debug
+                    << std::endl;  // debug
           std::cout << std::endl;
           t++;
 
-        } // end if
-        else if (r == pNum)
-        {
-
+        }  // end if
+        else if (r == pNum) {
           std::cout << "**AT TIME** " << t << std::endl;
           std::cout << std::endl;
 
-          if (readyQueue.empty() && !cpu.empty())
-          {
+          if (readyQueue.empty() && !cpu.empty()) {
             if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-                process[cpu[0].id].completed == 0)
-            {
+                process[cpu[0].id].completed == 0) {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu COMPLETE" << std::endl;
               std::cout << std::endl;
               process[cpu[0].id].completed = 1;
               process[cpu[0].id].finishT = t;
-              complete++; // update # of completed processes
+              complete++;  // update # of completed processes
 
-              cpu.clear(); // free cpu
-            }
-            else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                     process[cpu[0].id].completed == 0)
-            {
+              cpu.clear();  // free cpu
+            } else if (process[cpu[0].id].exeT !=
+                           process[cpu[0].id].requiredT &&
+                       process[cpu[0].id].completed == 0) {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^CONTINUES EXECUTION(empty q no new processes)"
                         << std::endl;
               std::cout << std::endl;
-              process[cpu[0].id].exeT++; // xxx
+              process[cpu[0].id].exeT++;  // xxx
             }
-          }
-          else if (!readyQueue.empty() && !cpu.empty())
-          {
+          } else if (!readyQueue.empty() && !cpu.empty()) {
             if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-                process[cpu[0].id].completed == 0)
-            {
+                process[cpu[0].id].completed == 0) {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu COMPLETE" << std::endl;
               std::cout << std::endl;
               process[cpu[0].id].completed = 1;
               process[cpu[0].id].finishT = t;
 
-              complete++; // update # of completed processes
+              complete++;  // update # of completed processes
 
-              cpu.clear(); // free cpu
-            }
-            else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                     process[cpu[0].id].completed == 0)
-            {
+              cpu.clear();  // free cpu
+            } else if (process[cpu[0].id].exeT !=
+                           process[cpu[0].id].requiredT &&
+                       process[cpu[0].id].completed == 0) {
               std::cout << "Process" << cpu.front().id << std::endl;
               std::cout << "^EXITS cpu ENTERS READY QUEUE" << std::endl;
               std::cout << std::endl;
 
               readyQueue.push_back(
-                  process[cpu[0].id]); // && breakpoint prev or r
+                  process[cpu[0].id]);  // && breakpoint prev or r
 
-              cpu.clear(); // free cpu
+              cpu.clear();  // free cpu
             }
             // update
             // ______________________________________________________________________________
@@ -373,89 +348,77 @@ int main(void)
           //   std::cout << "test" << std::endl;
           // }
 
-          if (arr != pNum) // HERE
+          if (arr != pNum)  // HERE
           {
             // END OF TIME SLICE
             std::cout << std::endl;
             // std::cout << "t2-" << t << std::endl;
             std::cout << "------------------------END TIME "
                          "SLICE------------------------"
-                      << std::endl; // debug
+                      << std::endl;  // debug
             std::cout << std::endl;
             t++;
           }
         }
-      } // end of process arrival for loop
-    }   // end of arrival != pNum if
+      }  // end of process arrival for loop
+    }    // end of arrival != pNum if
     // AFTER ALL PROCESSES HAVE ARRIVED WE FINISH ALL THEIR EXECUTIONS
-    while (arr == pNum && complete != pNum)
-    {
-
+    while (arr == pNum && complete != pNum) {
       // quick note this does nothing but seg faulted when i commented it out
       // so!
-      for (int i = 0; i < pNum; i++)
-      {
+      for (int i = 0; i < pNum; i++) {
         // std::cout << "at t" << t << std::endl;
         // std::cout << "Process: " <<process[i].id << " A: " <<
         // process[i].arrivalT << " R: " << process[i].requiredT << " E: " <<
         // process[i].exeT <<  "c:" << process[i].completed<< std::endl;
       }
 
-      if (readyQueue.empty() && !cpu.empty())
-      {
+      if (readyQueue.empty() && !cpu.empty()) {
         std::cout << "**AT TIME** " << t << std::endl;
         std::cout << std::endl;
 
         // std::cout << "q empty| cpu not empty" << std::endl;//debug
 
         if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-            process[cpu[0].id].completed == 0)
-        {
+            process[cpu[0].id].completed == 0) {
           std::cout << "Process" << cpu.front().id << std::endl;
           std::cout << "^EXITS cpu COMPLETE" << std::endl;
           std::cout << std::endl;
           process[cpu[0].id].completed = 1;
           process[cpu[0].id].finishT = t;
-          complete++; // update # of completed processes
+          complete++;  // update # of completed processes
 
-          cpu.clear(); // free cpu
-        }
-        else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                 process[cpu[0].id].completed == 0)
-        {
+          cpu.clear();  // free cpu
+        } else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
+                   process[cpu[0].id].completed == 0) {
           std::cout << "Process" << cpu.front().id << std::endl;
           std::cout << "^CONTINUES EXECUTION(empty q no new processes)"
                     << std::endl;
           std::cout << std::endl;
           process[cpu[0].id].exeT++;
         }
-      }
-      else if (!readyQueue.empty() && !cpu.empty())
-      {
+      } else if (!readyQueue.empty() && !cpu.empty()) {
         std::cout << "**AT TIME** " << t << std::endl;
         std::cout << std::endl;
         if (process[cpu[0].id].exeT == process[cpu[0].id].requiredT &&
-            process[cpu[0].id].completed == 0)
-        {
+            process[cpu[0].id].completed == 0) {
           std::cout << "Process" << cpu.front().id << std::endl;
           std::cout << "^EXITS cpu COMPLETE" << std::endl;
           std::cout << std::endl;
           process[cpu[0].id].completed = 1;
           process[cpu[0].id].finishT = t;
-          complete++; // update # of completed processes
+          complete++;  // update # of completed processes
 
-          cpu.clear(); // free cpu
-        }
-        else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
-                 process[cpu[0].id].completed == 0)
-        {
+          cpu.clear();  // free cpu
+        } else if (process[cpu[0].id].exeT != process[cpu[0].id].requiredT &&
+                   process[cpu[0].id].completed == 0) {
           std::cout << "Process" << cpu.front().id << std::endl;
           std::cout << "^EXITS cpu ENTERS READY QUEUE" << std::endl;
           std::cout << std::endl;
 
           readyQueue.push_back(process[cpu[0].id]);
 
-          cpu.clear(); // free cpu
+          cpu.clear();  // free cpu
         }
         // READY Q -> CPU
         std::cout << "Process" << readyQueue.front().id << std::endl;
@@ -464,9 +427,7 @@ int main(void)
         cpu.push_back(process[readyQueue.front().id]);
         process[readyQueue.front().id].exeT++;
         readyQueue.erase(readyQueue.begin());
-      }
-      else if (!readyQueue.empty() && cpu.empty())
-      {
+      } else if (!readyQueue.empty() && cpu.empty()) {
         std::cout << "**AT TIME** " << t << std::endl;
         std::cout << std::endl;
         std::cout << "Process" << readyQueue.front().id << std::endl;
@@ -482,12 +443,12 @@ int main(void)
       // std::cout << "t3-" << t << std::endl;
       std::cout
           << "-------------------------END TIME SLICE------------------------"
-          << std::endl; // debug
+          << std::endl;  // debug
       std::cout << std::endl;
       t++;
     }
 
-  } // end of while both arrival != pNum && complete != pNum
+  }  // end of while both arrival != pNum && complete != pNum
 
   // FINAL DEBUGGER LEAVE HERE:
   // for(int i = 0; i < pNum; i++)
@@ -498,8 +459,7 @@ int main(void)
   //
   // }
   // Calculate and output values
-  for (int i = 0; i < pNum; i++)
-  {
+  for (int i = 0; i < pNum; i++) {
     float turn = 0;
     float nTurn = 0;
     std::cout << std::endl;
